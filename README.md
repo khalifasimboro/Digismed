@@ -1,4 +1,4 @@
-# 📊 Dashboard SMED & TRS – Suivi Intelligent de Production
+# Dashboard SMED & TRS – Suivi Intelligent de Production
 
 ## Objectif du projet
 
