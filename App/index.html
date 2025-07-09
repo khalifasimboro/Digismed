@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGISMED</title>
+    <style>
+        body {
+            background-image: url('/home/falleiz/Bureau/Digismed/Assets/logommol.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        .welcome-text {
+            color: black;
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        .start-button {
+            background-color: #f0e68c;
+            color: black;
+            font-size: 24px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .start-button:hover {
+            background-color: #e6d85c;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-text">Bienvenu sur DIGISMED</div>
+    <button class="start-button" onclick="startApplication()">Démarer</button>
+
+    <script>
+        function startApplication() {
+            alert("Démarrer cliqué !"); // Remplacer par la logique future
+        }
+    </script>
+</body>
+</html>
