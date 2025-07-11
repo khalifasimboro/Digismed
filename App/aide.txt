@@ -1,0 +1,39 @@
+# Guide d'Aide - DIGISMED - SOTHEMA
+
+## Introduction
+Bienvenue dans le Dashboard de Contrôle ! Cette application a été conçue pour vous aider à gérer les changements de format machines, utilisateurs, bases de données et plus encore. Ce guide vous accompagnera à travers les fonctionnalités principales et vous donnera des conseils pour une utilisation optimale.
+
+## Navigation
+- **Menu latéral** : Utilisez la barre latérale pour naviguer entre les sections (Home, Machines, Users, Bases de données, Aide).
+- **Sélection des machines** : Choisissez une machine (Marchesini, Noack, Hoonga, Romaco) dans le menu déroulant pour afficher des métriques spécifiques.
+- **Boutons d’action** : Cliquez sur les boutons pour accéder aux fonctionnalités de chaque page.
+
+## Fonctionnalités Principales
+### Page Home
+- Affiche un aperçu général (total machines, utilisateurs actifs, etc.).
+- Sélectionnez une machine pour voir des métriques détaillées (fréquence, temps, suivi).
+
+### Page Machines
+- Consultez les statistiques spécifiques à chaque machine sélectionnée.
+- Les métriques sont présentées dans des cartes stylisées (actuellement placeholders).
+
+### Page Users
+- Gérez la liste des utilisateurs avec leurs noms, emails, rôles et statuts.
+- Les données sont affichées dans un tableau interactif.
+
+### Page Bases de Données
+- Accédez à différentes bases (Formats, SMED Marchesini, etc.).
+- **Voir** : Affiche les données d’un fichier Excel (ex. : Formats.xlsx).
+- **Importer** : Chargez un nouveau fichier Excel dans le répertoire Assets/donnees/.
+- **Exporter** : Fonctionnalité à venir pour télécharger les données.
+
+## Conseils Utiles
+- Sauvegardez régulièrement vos données importées.
+- Utilisez la barre de recherche pour filtrer rapidement le contenu.
+- Explorez les expanders pour des actions rapides sur les bases de données.
+
+## À Propos
+Cette application a été développée sous Streamlit par Rydouane SIMBORO et Adingra OUATTARA, pour une expérience utilisateur fluide et moderne. Pour plus d’informations, restez à l’écoute des mises à jour !
+
+---
+*Dernière mise à jour : 11 juillet 2025*

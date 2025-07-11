@@ -260,18 +260,16 @@ if st.session_state.current_page == 'home':
         # Ajoutez ici des métriques ou du contenu spécifique à Romaco
     else:
         st.markdown("""
-        <div class="content-card">
-            <h3>👋 Bienvenue dans votre application</h3>
+            <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
+            <h3>👋 Bienvenue sur votre Dashboard de controle</h3>
             <p>Utilisez la barre latérale pour naviguer entre les différentes sections de l'application.</p>
         </div>
         """, unsafe_allow_html=True)
 
 
 elif st.session_state.current_page == 'users':
-    st.markdown('<div class="page-title">👥 Gestion des Utilisateurs</div>', unsafe_allow_html=True)
-
     st.markdown("""
-    <div class="content-card">
+    <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
         <h3>👤 Liste des utilisateurs</h3>
         <p>Gérez les comptes utilisateurs et leurs permissions.</p>
     </div>
@@ -314,20 +312,6 @@ elif st.session_state.current_page == 'databases':
         ("📦 Données SMED ROMACO", "romaco"),
         ("🛠️ Données produits/équipements", "produits_equipements"),
     ]
-
-    # Stockage des dataframes en session_state
-    if 'db_data' not in st.session_state:
-        st.session_state.db_data = {}
-
-    # Charger le fichier Formats.xlsx au besoin
-    def load_formats():
-        if 'format' not in st.session_state.db_data:
-            try:
-                df = pd.read_excel("Assets/donnees/Formats.xlsx", engine='openpyxl')
-                st.session_state.db_data['format'] = df
-            except Exception as e:
-                st.session_state.db_data['format'] = None
-                st.error(f"Erreur lors du chargement de Formats.xlsx : {e}")
 
     # Ajout de style CSS pour ajuster la largeur et l'espacement vertical des boutons
     st.markdown("""
@@ -381,16 +365,21 @@ elif st.session_state.current_page == 'databases':
             st.markdown('<div class="custom-db-btn"></div>', unsafe_allow_html=True)
 
 elif st.session_state.current_page == 'help':
-     
+    # Chemin absolu du fichier d'aide
+    aide_path = "aide.txt"
+    try:
+        with open(aide_path, "r", encoding="utf-8") as f:
+            aide_content = f.read()
+    except Exception as e:
+        aide_content = f"Impossible de charger le fichier d'aide : {e}"
+
     st.markdown("""
-    <div class="content-card">
+    <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
         <h3>❓ Aide</h3>
-        <p>Prenez l'application en main pour une meilleure navigabilité.</p>
+    <p>Prenez votre application en main.</p>
     </div>
     """, unsafe_allow_html=True)
-
-      # Menu hamburger (décoratif)
-    st.markdown("---")
+    st.markdown(aide_content)
 
 
 # Footer
