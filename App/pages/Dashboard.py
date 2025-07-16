@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import os
+from sqlalchemy import create_engine,text
 
 # Configuration de la page
 st.set_page_config(
@@ -105,166 +106,117 @@ elif page_help:
 
 # Barre de recherche en haut
 
+#Fonction de création et affichage des métrics
+def create_machine_metrics(machine_name=None, values=None):
+    """
+    Crée les cartes de métriques pour toutes les machines
+    
+    Args:
+        machine_name (str): Nom de la machine pour personnalisation
+        values (list): Valeurs réelles à afficher (optionnel)
+    """
+    metric_card_style = """
+        background: linear-gradient(135deg, #3B82F6 60%, #1E3A8A 100%);
+        color: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 1rem 1rem;
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    """
+    
+    # Définition des métriques
+    metrics = [
+        "Fréquence changement format global",
+        "Temps total de changement de format", 
+        "Suivi changement de format"
+    ]
+    
+    # Valeurs par défaut ou personnalisées
+    if values is None:
+        values = ["--", "--", "--"]
+    
+    # Création des colonnes
+    col_a, col_b, col_c = st.columns(3)
+    columns = [col_a, col_b, col_c]
+    
+    # Génération des cartes
+    for col, metric, value in zip(columns, metrics, values):
+        with col:
+            st.markdown(f"""
+            <div class="content-card" style="{metric_card_style}">
+            <h4 style="color:white;">{metric}</h4>
+            <div style="font-size:2rem; color:white; font-weight:bold;">{value}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
 # Contenu principal basé sur la page sélectionnée
 
 if st.session_state.current_page == 'home':
 
-    # Affichage du contenu selon la machine sélectionnée
-    if selected_machine == "Marchesini":
-        # Trois barres symétriques pour les métriques Marchesini avec fond bleu et taille uniforme
-        metric_card_style = """
-            background: linear-gradient(135deg, #3B82F6 60%, #1E3A8A 100%);
-            color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 1rem 1rem;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        """
-        col_a, col_b, col_c = st.columns(3)
-        with col_a:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Fréquence changement format global</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_b:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Temps total de changement de format</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_c:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Suivi changement de format</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        # Ajoutez ici des métriques ou du contenu spécifique à Marchesini
-    elif selected_machine == "Noack":
-         # Trois barres symétriques pour les métriques Marchesini avec fond bleu et taille uniforme
-        metric_card_style = """
-            background: linear-gradient(135deg, #3B82F6 60%, #1E3A8A 100%);
-            color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 1rem 1rem;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        """
-        col_a, col_b, col_c = st.columns(3)
-        with col_a:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Fréquence changement format global</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_b:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Temps total de changement de format</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_c:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Suivi changement de format</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        # Ajoutez ici des métriques ou du contenu spécifique à Noack
-    elif selected_machine == "Hoonga":
-         # Trois barres symétriques pour les métriques Hoonga avec fond bleu et taille uniforme
-        metric_card_style = """
-            background: linear-gradient(135deg, #3B82F6 60%, #1E3A8A 100%);
-            color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 1rem 1rem;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        """
-        col_a, col_b, col_c = st.columns(3)
-        with col_a:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Fréquence changement format global</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_b:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Temps total de changement de format</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_c:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Suivi changement de format</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        # Ajoutez ici des métriques ou du contenu spécifique à Hoonga
-    elif selected_machine == "Romaco":
-         # Trois barres symétriques pour les métriques Romaco avec fond bleu et taille uniforme
-        metric_card_style = """
-            background: linear-gradient(135deg, #3B82F6 60%, #1E3A8A 100%);
-            color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 1rem 1rem;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        """
-        col_a, col_b, col_c = st.columns(3)
-        with col_a:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Fréquence changement format global</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_b:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Temps total de changement de format</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_c:
-            st.markdown(f"""
-            <div class="content-card" style="{metric_card_style}">
-            <h4 style="color:white;">Suivi changement de format</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">--</div>
-            </div>
-            """, unsafe_allow_html=True)
-        # Ajoutez ici des métriques ou du contenu spécifique à Romaco
+    if selected_machine in ["Marchesini", "Noack", "Hoonga", "Romaco"]:
+        create_machine_metrics()
+        # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
+        # Par exemple :
+        # if selected_machine == "Marchesini":
+        #     # Contenu spécifique à Marchesini
+        # elif selected_machine == "Noack":
+        #     # Contenu spécifique à Noack
+        # etc.
     else:
         st.markdown("""
             <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
             <h3>👋 Bienvenue sur votre Dashboard de controle</h3>
-            <p>Utilisez la barre latérale pour naviguer entre les différentes sections de l'application.</p>
+            <p>Utilisez la barre latérale pour naviguer entre les différentes sections de l'application ou Importez un fichier <b>Format</b> et un fichier <b>Plan de production</b> depuis votre ordinateur.</p>
         </div>
         """, unsafe_allow_html=True)
+        # Ajout de deux boîtes de chargement de fichiers
+
+        col1, col2 = st.columns(2)
+        with col1:
+            uploaded_format = st.file_uploader(
+                "Charger le fichier Format",
+                type=["xlsx", "csv"],
+                key="format_upload"
+            )
+        with col2:
+            uploaded_production = st.file_uploader(
+                "Charger le fichier Plan de production",
+                type=["xlsx", "csv"],
+                key="production_upload"
+            )
+
+        df_format, df_production = None, None
+
+        if uploaded_format is not None:
+            try:
+                if uploaded_format.name.endswith('.csv'):
+                    df_format = pd.read_csv(uploaded_format)
+                else:
+                    df_format = pd.read_excel(uploaded_format)
+                st.success("Fichier Format chargé avec succès.")
+            except Exception as e:
+                st.error(f"Erreur lors du chargement du fichier Format : {e}")
+            st.markdown("---")
+            st.write("Aperçu du fichier Format :")
+            st.dataframe(df_format.head())
+
+        if uploaded_production is not None:
+            try:
+                if uploaded_production.name.endswith('.csv'):
+                    df_production = pd.read_csv(uploaded_production)
+                else:
+                    df_production = pd.read_excel(uploaded_production)
+                st.success("Fichier Plan de production chargé avec succès.")
+            except Exception as e:
+                st.error(f"Erreur lors du chargement du fichier Plan de production : {e}")
+            st.markdown("---")
+            st.write("Aperçu du fichier Plan de production :")
+            st.dataframe(df_production.head())
+        
 
 
 elif st.session_state.current_page == 'users':
@@ -286,6 +238,21 @@ elif st.session_state.current_page == 'users':
     st.dataframe(df_users, use_container_width=True)
 
 elif st.session_state.current_page == 'databases':
+    # Connexion à Supabase avec gestion d'erreur détaillée
+    try:
+        SUPABASE_URL = st.secrets["SUPABASE_URL"]
+        st.write(f"[DEBUG] Tentative de connexion avec URL : {SUPABASE_URL}")
+        engine = create_engine(SUPABASE_URL)
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+        st.success("Connexion à Supabase réussie.")
+    except KeyError:
+        st.error("Le fichier secrets.toml est manquant ou mal configuré. Vérifiez .streamlit/secrets.toml ou les secrets sur SCC.")
+        st.stop()
+    except Exception as e:
+        st.error(f"[ERROR] Erreur de connexion à Supabase : {e}")
+        st.write(f"[DEBUG] Détails : {str(e)}")
+        st.stop()
 
     st.markdown("""
     <div class="content-card" style="
@@ -303,7 +270,7 @@ elif st.session_state.current_page == 'databases':
 
     st.markdown("---")
 
-    # Liste des bases de données
+    # Liste des bases de données avec mappage vers les tables Supabase
     dbs = [
         ("📁 Données format", "format"),
         ("🗃️ Données SMED MARCHESINI", "marchesini"),
@@ -312,6 +279,19 @@ elif st.session_state.current_page == 'databases':
         ("📦 Données SMED ROMACO", "romaco"),
         ("🛠️ Données produits/équipements", "produits_equipements"),
     ]
+    table_mapping = {
+        "format": "Format_database",
+        "marchesini": "Marchesini_database",
+        "noack": "Noack_database",
+        "hoonga": "Hoonga_database",
+        "romaco": "Romaco_database",
+        "produits_equipements": "Produits_equipements_database",
+    }
+
+    # Stockage des dataframes en session_state
+    if 'db_data' not in st.session_state:
+        st.session_state.db_data = {}
+        st.write("[DEBUG] Initialisation de db_data dans session_state")
 
     # Ajout de style CSS pour ajuster la largeur et l'espacement vertical des boutons
     st.markdown("""
@@ -332,19 +312,33 @@ elif st.session_state.current_page == 'databases':
         target_col = col_gauche if idx < 3 else col_droite
         with target_col:
             if st.button(label, key=f"dbbtn_{key}", help=None, type="secondary", use_container_width=False):
-                with st.expander(f"{label} - Actions rapides"):
-                    col_v, col_i, col_e = st.columns(3)
+                st.write(f"[DEBUG] Bouton {label} cliqué, clé : {key}")
+                with st.expander(f"{label} - Actions rapides", expanded=True):
+                    col_v, col_i, col_e = st.columns([2, 1, 1])
                     with col_v:
                         if st.button("👁️ Voir", key=f"voir_{key}"):
-                            if key == "format":
-                                load_formats()
-                                df = st.session_state.db_data.get('format')
-                                if df is not None:
-                                    st.dataframe(df, use_container_width=True)
-                                else:
-                                    st.warning("Aucune donnée à afficher pour Formats.xlsx.")
+                            st.write(f"[DEBUG] Bouton Voir cliqué pour {label}, clé : {key}")
+                            table_name = table_mapping.get(key)
+                            if table_name:
+                                try:
+                                    st.write(f"[DEBUG] Tentative de lecture de {table_name}")
+                                    df = pd.read_sql(text(f"SELECT * FROM {table_name}"), engine)
+                                    st.write(f"[DEBUG] Requête exécutée. Nombre de lignes : {len(df)}")
+                                    if not df.empty:
+                                        st.session_state.db_data[key] = df
+                                        st.write("[DEBUG] Aperçu des données :", df.head())
+                                        st.container()
+                                        st.dataframe(df, use_container_width=True)
+                                        st.write("[DEBUG] Données stockées :", st.session_state.db_data[key])
+                                    else:
+                                        st.warning(f"Aucune donnée dans {table_name}. Vérifiez Supabase.")
+                                        st.container()
+                                        st.write("[DEBUG] Aucun tableau à afficher.")
+                                except Exception as e:
+                                    st.error(f"[ERROR] Erreur lors de la lecture de {table_name} : {e}")
+                                    st.write(f"[DEBUG] Détails : {str(e)}")
                             else:
-                                st.info(f"Affichage de {label} (fonctionnalité à venir)")
+                                st.info(f"Affichage de {label} (table non configurée)")
                     with col_i:
                         uploaded_file = st.file_uploader(
                             "Sélectionnez un fichier Excel à importer",
@@ -353,15 +347,38 @@ elif st.session_state.current_page == 'databases':
                             label_visibility="collapsed"
                         )
                         if uploaded_file is not None:
-                            save_dir = "Assets/donnees"
-                            os.makedirs(save_dir, exist_ok=True)
-                            save_path = os.path.join(save_dir, uploaded_file.name)
-                            with open(save_path, "wb") as f:
-                                f.write(uploaded_file.getbuffer())
-                            st.success(f"Fichier '{uploaded_file.name}' importé et sauvegardé dans '{save_dir}'.")
+                            table_name = table_mapping.get(key)
+                            if table_name:
+                                try:
+                                    st.write(f"Importation dans {table_name}...")
+                                    df_new = pd.read_excel(uploaded_file)
+                                    df_new.to_sql(table_name, engine, if_exists='replace', index=False)
+                                    st.success(f"Données importées avec succès dans {table_name}.")
+                                except Exception as e:
+                                    st.error(f"Erreur lors de l'import dans {table_name} : {e}")
+                            else:
+                                st.warning(f"Import non disponible pour {label}.")
                     with col_e:
                         if st.button("⬇️ Exporter", key=f"export_{key}"):
-                            st.info(f"Export de {label} (fonctionnalité à venir)")
+                            df = st.session_state.db_data.get(key)
+                            table_name = table_mapping.get(key)
+                            if df is not None and table_name:
+                                try:
+                                    st.write(f"Exportation de {table_name}...")
+                                    csv_path = os.path.join("Assets", f"{table_name}_export.csv")
+                                    df.to_csv(csv_path, index=False)
+                                    st.success(f"Données exportées dans '{csv_path}'.")
+                                    csv_data = df.to_csv(index=False).encode('utf-8')
+                                    st.download_button(
+                                        label="Télécharger le CSV",
+                                        data=csv_data,
+                                        file_name=f"{table_name}_export.csv",
+                                        mime_type="text/csv"
+                                    )
+                                except Exception as e:
+                                    st.error(f"Erreur lors de l'export de {table_name} : {e}")
+                            else:
+                                st.warning(f"Aucune donnée à exporter pour {table_name}.")
             st.markdown('<div class="custom-db-btn"></div>', unsafe_allow_html=True)
 
 elif st.session_state.current_page == 'help':
@@ -384,4 +401,3 @@ elif st.session_state.current_page == 'help':
 
 # Footer
 st.markdown("---")
-st.markdown("*Application développée avec Streamlit* 🚀")
