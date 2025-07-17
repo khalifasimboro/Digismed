@@ -161,9 +161,10 @@ def upload_and_optimize() -> Optional[Dict[str, List[str]]]:
             
             return optimized_orders
             
+            
         except Exception as e:
             st.error(f"Erreur lors du traitement des données : {e}")
             return None
     
     # Retour None si les fichiers ne sont pas encore chargés
-    return None
+    #return None

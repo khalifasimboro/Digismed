@@ -172,16 +172,13 @@ def afficher_resultats(optimized_orders: Dict[str, List[str]]):
         st.write("❌ Aucun résultat d'optimisation disponible")
         return
     for machine, order in optimized_orders.items():
-        if selected_machine:
-            if selected_machine == machine :
-              st.write(f"Machine {machine}: {', '.join(order)}")
+        st.write(f"Machine {machine}: {', '.join(order)}")
 
 
 # Contenu principal basé sur la page sélectionnée
 if st.session_state.current_page == 'home':
         
         if selected_machine in ["Marchesini", "Noack", "Hoonga", "Romaco"]:
-        
             # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
             # Contenu spécifique à Marchesini
             if selected_machine == "Marchesini":
@@ -217,7 +214,6 @@ if st.session_state.current_page == 'home':
             <p>Utilisez la barre latérale pour naviguer entre les différentes sections de l'application ou Importez un fichier <b>Format</b> et un fichier <b>Plan de production</b> depuis votre ordinateur.</p>
         </div>
         """, unsafe_allow_html=True)
-             upload_and_optimize()
 
 
 elif st.session_state.current_page == 'users':
