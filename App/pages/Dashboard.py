@@ -4,6 +4,7 @@ import os
 from typing import List, Dict
 from sqlalchemy import create_engine,text
 from functions import upload_and_optimize
+import usersdb
 
 
 # Configuration de la page
@@ -154,8 +155,7 @@ def create_machine_metrics(values: List[str] = None):
             </div>
             """, unsafe_allow_html=True)
 
-
-#fonction pour afficher les données de la machine sélectionnée
+#fonction pour afficher les calculs par machine
 def afficher_resultats(optimized_orders: Dict[str, List[str]]):
     """Affiche les résultats d'optimisation"""
     if not optimized_orders:
@@ -164,6 +164,17 @@ def afficher_resultats(optimized_orders: Dict[str, List[str]]):
     for machine, order in optimized_orders.items():
         if machine == selected_machine:
             st.write(f"Machine {machine}: {', '.join(order)}")
+
+#fonction pour afficher les données de la machine sélectionnée
+def afficher_resultats(optimized_orders: Dict[str, List[str]]):
+    """Affiche les résultats d'optimisation"""
+    if not optimized_orders:
+        st.write("❌ Aucun résultat d'optimisation disponible")
+        return
+    for machine, order in optimized_orders.items():
+        if selected_machine:
+            if selected_machine == machine :
+              st.write(f"Machine {machine}: {', '.join(order)}")
 
 
 # Contenu principal basé sur la page sélectionnée
@@ -213,19 +224,55 @@ elif st.session_state.current_page == 'users':
     st.markdown("""
     <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
         <h3>👤 Liste des utilisateurs</h3>
-        <p>Gérez les comptes utilisateurs et leurs permissions.</p>
+        <p>Gérez les comptes utilisateurs et leurs codes secrets.</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # Tableau fictif des utilisateurs
-    users_data = {
-        'Nom': ['Alice Martin', 'Bob Dupont', 'Claire Moreau', 'David Bernard'],
-        'Email': ['alice@example.com', 'bob@example.com', 'claire@example.com', 'david@example.com'],
-        'Rôle': ['Admin', 'Utilisateur', 'Moderateur', 'Utilisateur'],
-        'Statut': ['Actif', 'Actif', 'Inactif', 'Actif']
-    }
-    df_users = pd.DataFrame(users_data)
-    st.dataframe(df_users, use_container_width=True)
+    # Importer la base de données des utilisateurs
+    try:
+        df_users = usersdb.get_users()
+        if not df_users.empty:
+            st.dataframe(df_users, use_container_width=True, hide_index=True)
+        else:
+            st.warning("Aucun utilisateur trouvé.")
+    except Exception as e:
+        st.error(f"Erreur lors de la récupération des utilisateurs : {e}")
+        st.stop()
+
+    # Formulaire pour ajouter un utilisateur
+    st.markdown("---")
+    st.subheader("Ajouter un utilisateur")
+    with st.form(key="add_user_form"):
+        nom = st.text_input("Nom")
+        code_secret = st.text_input("Code secret", type="password")  # Masque le mot de passe
+        submit_button = st.form_submit_button(label="Ajouter")
+
+        if submit_button:
+            if nom and code_secret:
+                try:
+                    usersdb.add_user(nom, code_secret)
+                    st.success("Utilisateur ajouté avec succès !")
+                    st.write(f"[DEBUG] Ajouté : {nom}, {code_secret}")
+                    st.rerun()  # Rafraîchir la page
+                except ValueError as e:
+                    st.error(str(e))
+            else:
+                st.error("Veuillez remplir tous les champs.")
+
+    # Section pour supprimer un utilisateur
+    st.markdown("---")
+    st.subheader("Supprimer un utilisateur")
+    if not df_users.empty:
+        user_id = st.selectbox("Sélectionner un utilisateur à supprimer", options=df_users['id'].tolist())
+        if st.button("Supprimer"):
+            try:
+                usersdb.delete_user(user_id)
+                st.success(f"Utilisateur avec ID {user_id} supprimé avec succès !")
+                st.rerun()
+            except ValueError as e:
+                st.error(str(e))
+    else:
+        st.warning("Aucun utilisateur à supprimer.")
 
 elif st.session_state.current_page == 'databases':
     # Connexion à Supabase avec gestion d'erreur détaillée

@@ -1,9 +1,8 @@
 import pandas as pd
 import numpy as np
 import streamlit as st
-from typing import List, Dict, Optional
+from typing import List, Dict,Optional
 
-####Fonctions de calcul et d'optimisation
 
 # Colonnes de format à prendre en compte (toutes sauf "Couverture" et colonnes non numériques si présentes)
 format_columns = [
@@ -11,6 +10,8 @@ format_columns = [
     "Réf formage", "Réf Souflage", "Réf Alimentation Auto", "Réf scellage Sup",
     "Réf scellage inf", "Réf Refroidissement"
 ]
+
+#Fonctions de calcul et d'optimisation 
 
 # Fonction pour parser et normaliser les valeurs (remplace "Non disponible" par 0)
 def normalize_value(value):
