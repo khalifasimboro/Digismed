@@ -1,9 +1,40 @@
+import streamlit as st
 import pandas as pd
 import numpy as np
 from typing import List, Dict
+from fusionner_fichier_fp import fusionner_fichiers_excel
+
+#Fichier de sortie pour les données fusionnées
+df_result = fusionner_fichiers_excel()
+
+# Colonnes de format à prendre en compte (toutes sauf "Couverture" et colonnes non numériques si présentes)
+format_columns = [
+    "Type Blister", "Dim blister", "Nbre d'unité / blstr", "Réf format",
+    "Réf formage", "Réf Souflage", "Réf Alimentation Auto", "Réf scellage Sup",
+    "Réf scellage inf", "Réf Refroidissement"
+]
+
+
+# Fonction pour parser et normaliser les valeurs (remplace "Non disponible" par 0)
+def normalize_value(value):
+    if pd.isna(value) or value == "Non disponible":
+        return 0
+    try:
+        return float(str(value).replace("cm", "").strip()) if isinstance(value, str) else float(value)
+    except:
+        return 0
+
+# Calculer la différence de format entre deux produits (distance euclidienne)
+def format_difference(row1: pd.Series, row2: pd.Series) -> float:
+    diff_sum = 0
+    for col in format_columns:
+        val1 = normalize_value(row1[col])
+        val2 = normalize_value(row2[col])
+        diff_sum += (val1 - val2) ** 2
+    return np.sqrt(diff_sum)
 
 # Algorithme d'optimisation
-def optimize_fabrication_order(machine_df: pd.DataFrame) -> List[str]:
+def optimize_fabrication_order(machine_df: pd.DataFrame) -> List[str]:    
     if machine_df.empty:
         return []
 
@@ -32,3 +63,18 @@ def optimize_fabrication_order(machine_df: pd.DataFrame) -> List[str]:
         remaining.remove(next_product)
     
     return order
+
+
+if "Machines" not in df_result.columns:
+    st.write("❌ Colonne 'Machines' manquante dans df_result")
+else:
+    # Grouper par machine et optimiser l'ordre
+    machines = df_result["Machines"].unique()
+    optimized_orders = {}
+    for machine in machines:
+        machine_df = df_result[df_result["Machines"] == machine].copy()
+        optimized_orders[machine] = optimize_fabrication_order(machine_df)
+    
+    # Afficher les résultats
+    for machine, order in optimized_orders.items():
+        st.write(f"Machine {machine}: {', '.join(order)}")

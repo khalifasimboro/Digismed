@@ -1,8 +1,10 @@
-# # Import des bibliothèques nécessaires
 import streamlit as st
 import pandas as pd
 import os
+from typing import List, Dict
 from sqlalchemy import create_engine,text
+from functions import upload_and_optimize
+
 
 # Configuration de la page
 st.set_page_config(
@@ -107,7 +109,7 @@ elif page_help:
 # Barre de recherche en haut
 
 #Fonction de création et affichage des métrics
-def create_machine_metrics(machine_name=None, values=None):
+def create_machine_metrics(values: List[str] = None):
     """
     Crée les cartes de métriques pour toutes les machines
     
@@ -131,92 +133,80 @@ def create_machine_metrics(machine_name=None, values=None):
     # Définition des métriques
     metrics = [
         "Fréquence changement format global",
-        "Temps total de changement de format", 
-        "Suivi changement de format"
+        "Temps total de changement de format"
     ]
-    
+
     # Valeurs par défaut ou personnalisées
     if values is None:
-        values = ["--", "--", "--"]
+        values = ["--","--"]
     
     # Création des colonnes
-    col_a, col_b, col_c = st.columns(3)
-    columns = [col_a, col_b, col_c]
+    col_a, col_b = st.columns(2)
+    columns = [col_a, col_b]
     
     # Génération des cartes
-    for col, metric, value in zip(columns, metrics, values):
+    for col, metric, values in zip(columns, metrics, values):
         with col:
             st.markdown(f"""
             <div class="content-card" style="{metric_card_style}">
             <h4 style="color:white;">{metric}</h4>
-            <div style="font-size:2rem; color:white; font-weight:bold;">{value}</div>
+            <div style="font-size:2rem; color:white; font-weight:bold;">{values}</div>
             </div>
             """, unsafe_allow_html=True)
 
+
+#fonction pour afficher les données de la machine sélectionnée
+def afficher_resultats(optimized_orders: Dict[str, List[str]]):
+    """Affiche les résultats d'optimisation"""
+    if not optimized_orders:
+        st.write("❌ Aucun résultat d'optimisation disponible")
+        return
+    for machine, order in optimized_orders.items():
+        if machine == selected_machine:
+            st.write(f"Machine {machine}: {', '.join(order)}")
+
+
 # Contenu principal basé sur la page sélectionnée
-
 if st.session_state.current_page == 'home':
+        
+        if selected_machine in ["Marchesini", "Noack", "Hoonga", "Romaco"]:
+        
+            # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
+            # Contenu spécifique à Marchesini
+            if selected_machine == "Marchesini":
+                values = ["3","00 min"]
+                create_machine_metrics(values)
+                optimized_orders = upload_and_optimize()
+                st.write("Aperçu des données de Marchesini")
+                if optimized_orders:
+                   afficher_resultats(optimized_orders)
 
-    if selected_machine in ["Marchesini", "Noack", "Hoonga", "Romaco"]:
-        create_machine_metrics()
-        # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
-        # Par exemple :
-        # if selected_machine == "Marchesini":
-        #     # Contenu spécifique à Marchesini
-        # elif selected_machine == "Noack":
-        #     # Contenu spécifique à Noack
-        # etc.
-    else:
-        st.markdown("""
+            # Contenu spécifique à Noack
+            elif selected_machine == "Noack":
+                values = ["10", "1 min"]
+                create_machine_metrics(values)
+                """st.dataframe(df_noack.head())
+                create_machine_metrics(machine_name=selected_machine, values=values)"""
+            # Contenu spécifique à Hoonga
+            elif selected_machine == "Hoonga":
+                values = ["2", "20 min"]
+                create_machine_metrics(values)
+                """ st.dataframe(df_hoonga.head())
+                create_machine_metrics(machine_name=selected_machine, values=values)"""
+            # Contenu spécifique à Romaco
+            elif selected_machine == "Romaco":
+                values = ["1", "10 min"]
+                create_machine_metrics(values)
+                """ st.dataframe(df_romaco.head())
+                create_machine_metrics(machine_name=selected_machine, values=values)"""
+        else:
+             st.markdown("""
             <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
             <h3>👋 Bienvenue sur votre Dashboard de controle</h3>
             <p>Utilisez la barre latérale pour naviguer entre les différentes sections de l'application ou Importez un fichier <b>Format</b> et un fichier <b>Plan de production</b> depuis votre ordinateur.</p>
         </div>
         """, unsafe_allow_html=True)
-        # Ajout de deux boîtes de chargement de fichiers
-
-        col1, col2 = st.columns(2)
-        with col1:
-            uploaded_format = st.file_uploader(
-                "Charger le fichier Format",
-                type=["xlsx", "csv"],
-                key="format_upload"
-            )
-        with col2:
-            uploaded_production = st.file_uploader(
-                "Charger le fichier Plan de production",
-                type=["xlsx", "csv"],
-                key="production_upload"
-            )
-
-        df_format, df_production = None, None
-
-        if uploaded_format is not None:
-            try:
-                if uploaded_format.name.endswith('.csv'):
-                    df_format = pd.read_csv(uploaded_format)
-                else:
-                    df_format = pd.read_excel(uploaded_format)
-                st.success("Fichier Format chargé avec succès.")
-            except Exception as e:
-                st.error(f"Erreur lors du chargement du fichier Format : {e}")
-            st.markdown("---")
-            st.write("Aperçu du fichier Format :")
-            st.dataframe(df_format.head())
-
-        if uploaded_production is not None:
-            try:
-                if uploaded_production.name.endswith('.csv'):
-                    df_production = pd.read_csv(uploaded_production)
-                else:
-                    df_production = pd.read_excel(uploaded_production)
-                st.success("Fichier Plan de production chargé avec succès.")
-            except Exception as e:
-                st.error(f"Erreur lors du chargement du fichier Plan de production : {e}")
-            st.markdown("---")
-            st.write("Aperçu du fichier Plan de production :")
-            st.dataframe(df_production.head())
-        
+             upload_and_optimize()
 
 
 elif st.session_state.current_page == 'users':
