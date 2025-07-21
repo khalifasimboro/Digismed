@@ -17,9 +17,10 @@ st.set_page_config(
 # CSS personnalisé pour styliser la sidebar et le contenu principal
 st.markdown("""
 <style>
-    /* Sidebar styling - Fond bleu foncé brillant */
+    /* Sidebar styling - Fond bleu foncé brillant avec largeur augmentée */
     [data-testid="stSidebar"] {
         background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%) !important;
+        min-width: 300px !important; /* Ajuste cette valeur (ex. 250px, 300px, 350px) selon tes besoins */
     }
     /* Sidebar text color - Blanc pour contraste */
     [data-testid="stSidebar"] * {
@@ -32,7 +33,7 @@ st.markdown("""
         border: 2px solid rgba(255,255,255,0.3) !important;
         border-radius: 10px !important;
         width: 100% !important;
-        padding: 15px !important;
+        padding: 10px !important;
         font-weight: bold !important;
         font-size: 16px !important;
         margin: 10px 0 !important;
@@ -54,13 +55,13 @@ st.markdown("""
             linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.3) 75%);
         background-size: 30px 30px;
         background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
-        padding-top: 2rem;
+        padding-top: 1rem;
         max-width: 100%;
     }
     /* Card styling - Fond blanc pour contraste */
     .content-card {
         background: rgba(255, 255, 255, 0.9);
-        padding: 2rem;
+        padding: 1rem;
         border-radius: 15px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         margin: 1rem 0;
@@ -80,7 +81,7 @@ st.markdown("""
 with st.sidebar:
     # Titre de la sidebar
     st.markdown("# 🏠 Menu de Navigation")
-    
+
     # Menu hamburger (décoratif)
     st.markdown("---")
     
@@ -91,6 +92,24 @@ with st.sidebar:
     page_users = st.button("👥 Users", key="users")
     page_databases = st.button("🗄️ Bases de données", key="databases")
     page_help = st.button("❓ Aide", key="help")
+
+    # Uploader côte à côte pour les fichiers de format et de conditionnement
+    st.markdown("---")
+
+    st.markdown("### 📂 Importer les fichiers")
+    col1, col2 = st.columns(2)
+    with col1:
+        format_file = st.file_uploader(
+            "Formats",
+            type=["xlsx", "xls", "csv"],
+            key="format_file"
+        )
+    with col2:
+        cond_file = st.file_uploader(
+            "Conditionnement",
+            type=["xlsx", "xls", "csv"],
+            key="cond_file"
+        )
 
 # Gestion de l'état de la page
 if 'current_page' not in st.session_state:
