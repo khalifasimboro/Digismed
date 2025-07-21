@@ -136,6 +136,7 @@ def upload_and_optimize() -> Optional[Dict[str, List[str]]]:
         st.markdown("---")
         st.write("Aperçu du fichier Plan de production :")
         st.dataframe(df_production.head())
+        st.markdown("---")
     
     # Vérification des données chargées
     if df_format is not None and df_production is not None:

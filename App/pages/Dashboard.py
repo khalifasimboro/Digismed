@@ -6,7 +6,6 @@ from sqlalchemy import create_engine,text
 from functions import upload_and_optimize
 import usersdb
 
-
 # Configuration de la page
 st.set_page_config(
     page_title="Dashboard de contrôle",
@@ -86,7 +85,7 @@ with st.sidebar:
     st.markdown("---")
     
     # Boutons de navigation avec émojis
-    machine_options = ["Marchesini", "Noack", "Hoonga", "Romaco"]
+    machine_options = ["MARCHESINI", "NOACK", "HOONGA", "ROMACO"]
     selected_machine = st.selectbox("⚙️ Machines", options=[""] + machine_options, key="machines_select")
     page_home = st.button("🏠 Home", key="home") 
     page_users = st.button("👥 Users", key="users")
@@ -155,65 +154,98 @@ def create_machine_metrics(values: List[str] = None):
             </div>
             """, unsafe_allow_html=True)
 
-#fonction pour afficher les calculs par machine
-def afficher_resultats(optimized_orders: Dict[str, List[str]]):
-    """Affiche les résultats d'optimisation"""
-    if not optimized_orders:
-        st.write("❌ Aucun résultat d'optimisation disponible")
-        return
-    for machine, order in optimized_orders.items():
-        if machine == selected_machine:
-            st.write(f"Machine {machine}: {', '.join(order)}")
 
 #fonction pour afficher les données de la machine sélectionnée
 def afficher_resultats(optimized_orders: Dict[str, List[str]]):
-    """Affiche les résultats d'optimisation"""
+    """Affiche les résultats d'optimisation pour une machine sélectionnée"""
     if not optimized_orders:
         st.write("❌ Aucun résultat d'optimisation disponible")
         return
-    for machine, order in optimized_orders.items():
-        st.write(f"Machine {machine}: {', '.join(order)}")
+    keys = list(optimized_orders.keys())
+    # Afficher les résultats pour la machine sélectionnée
+    if selected_machine in optimized_orders:
+        order = optimized_orders[selected_machine]
+        data = {"Classement": range(1, len(order) + 1), "Produits": order}
+        st.write(f"Classement des ordres de conditionnement pour la {selected_machine}")
+        df_display = pd.DataFrame(data)
+        st.dataframe(df_display, use_container_width=True, hide_index=True)
+        st.write(optimized_orders)
+    else:
+        st.write(optimized_orders)
+        #st.write(f"❌ Aucune donnée pour la machine {selected_machine}")
 
 
 # Contenu principal basé sur la page sélectionnée
 if st.session_state.current_page == 'home':
         
-        if selected_machine in ["Marchesini", "Noack", "Hoonga", "Romaco"]:
+        if selected_machine in ["MARCHESINI", "NOACK", "HOONGA", "ROMACO"]:
             # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
             # Contenu spécifique à Marchesini
-            if selected_machine == "Marchesini":
-                values = ["3","00 min"]
+            if selected_machine == "MARCHESINI":
+                values = ["30", "2h 15m"]
                 create_machine_metrics(values)
                 optimized_orders = upload_and_optimize()
-                st.write("Aperçu des données de Marchesini")
                 if optimized_orders:
-                   afficher_resultats(optimized_orders)
+                    afficher_resultats(optimized_orders)
 
             # Contenu spécifique à Noack
-            elif selected_machine == "Noack":
-                values = ["10", "1 min"]
-                create_machine_metrics(values)
-                """st.dataframe(df_noack.head())
-                create_machine_metrics(machine_name=selected_machine, values=values)"""
+            elif selected_machine == "NOACK":
+               values = ["20", "3h 15m"]
+               create_machine_metrics(values)
+               optimized_orders = upload_and_optimize()
+               if optimized_orders:
+                    afficher_resultats(optimized_orders)
+
             # Contenu spécifique à Hoonga
-            elif selected_machine == "Hoonga":
-                values = ["2", "20 min"]
+            elif selected_machine == "HOONGA":
+                values = ["40", "5h 15m"]
                 create_machine_metrics(values)
-                """ st.dataframe(df_hoonga.head())
-                create_machine_metrics(machine_name=selected_machine, values=values)"""
+                optimized_orders = upload_and_optimize()
+                if optimized_orders:
+                    afficher_resultats(optimized_orders)
+
             # Contenu spécifique à Romaco
-            elif selected_machine == "Romaco":
-                values = ["1", "10 min"]
-                create_machine_metrics(values)
-                """ st.dataframe(df_romaco.head())
-                create_machine_metrics(machine_name=selected_machine, values=values)"""
+            elif selected_machine == "ROMACO":
+               values = ["10", "1h 15m"]
+               create_machine_metrics(values)
+               optimized_orders = upload_and_optimize()
+               if optimized_orders:
+                    afficher_resultats(optimized_orders)
+
         else:
-             st.markdown("""
-            <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
-            <h3>👋 Bienvenue sur votre Dashboard de controle</h3>
-            <p>Utilisez la barre latérale pour naviguer entre les différentes sections de l'application ou Importez un fichier <b>Format</b> et un fichier <b>Plan de production</b> depuis votre ordinateur.</p>
-        </div>
-        """, unsafe_allow_html=True)
+             # Contenu centré
+            st.markdown(
+                """
+                <style>
+                .centered-content {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 80vh; /* Réduit la hauteur minimale pour remonter */
+                    width: 100%;
+                    flex-direction: column;
+                    text-align: center;
+                    margin-top: -10vh; /* Ajuste cette valeur pour remonter davantage si besoin */
+                }
+                .content-card {
+                    background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+                    color: white;
+                    padding: 2rem;
+                    border-radius: 15px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    max-width: 80%;
+                    margin: 0 auto;
+                }
+                </style>
+                <div class="centered-content">
+                    <div class="content-card">
+                        <h3>👋 Bienvenue sur votre Dashboard de controle</h3>
+                        <p>Utilisez la barre latérale pour naviguer entre les différentes sections de l'application.</p>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 
 elif st.session_state.current_page == 'users':
@@ -274,7 +306,6 @@ elif st.session_state.current_page == 'databases':
     # Connexion à Supabase avec gestion d'erreur détaillée
     try:
         SUPABASE_URL = st.secrets["SUPABASE_URL"]
-        st.write(f"[DEBUG] Tentative de connexion avec URL : {SUPABASE_URL}")
         engine = create_engine(SUPABASE_URL)
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
@@ -324,7 +355,6 @@ elif st.session_state.current_page == 'databases':
     # Stockage des dataframes en session_state
     if 'db_data' not in st.session_state:
         st.session_state.db_data = {}
-        st.write("[DEBUG] Initialisation de db_data dans session_state")
 
     # Ajout de style CSS pour ajuster la largeur et l'espacement vertical des boutons
     st.markdown("""
@@ -430,7 +460,3 @@ elif st.session_state.current_page == 'help':
     </div>
     """, unsafe_allow_html=True)
     st.markdown(aide_content)
-
-
-# Footer
-st.markdown("---")
