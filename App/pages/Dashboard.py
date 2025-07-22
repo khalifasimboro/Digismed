@@ -192,10 +192,8 @@ def afficher_resultats(optimized_orders: Dict[str, List[str]]):
         st.write(f"Classement des ordres de conditionnement pour la {selected_machine}")
         df_display = pd.DataFrame(data)
         st.dataframe(df_display, use_container_width=True, hide_index=True)
-        st.write(optimized_orders)
     else:
-        st.write(optimized_orders)
-        #st.write(f"❌ Aucune donnée pour la machine {selected_machine}")
+        st.write(f"❌ Aucune donnée pour la machine {selected_machine}")
 
 
 # Contenu principal basé sur la page sélectionnée
@@ -206,7 +204,7 @@ if st.session_state.current_page == 'home':
             # Contenu spécifique à Marchesini
             if selected_machine == "MARCHESINI":
                 optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
-                create_machine_metrics(values)
+                create_machine_metrics(values[selected_machine])
                 
                 if optimized_orders:
                     afficher_resultats(optimized_orders)
@@ -214,21 +212,21 @@ if st.session_state.current_page == 'home':
             # Contenu spécifique à Noack
             elif selected_machine == "NOACK":
                optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
-               create_machine_metrics(values)
+               create_machine_metrics(values[selected_machine])
                if optimized_orders:
                     afficher_resultats(optimized_orders)
 
             # Contenu spécifique à Hoonga
             elif selected_machine == "HOONGA":
                 optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
-                create_machine_metrics(values)
+                create_machine_metrics(values[selected_machine])
                 if optimized_orders:
                     afficher_resultats(optimized_orders)
 
             # Contenu spécifique à Romaco
             elif selected_machine == "ROMACO":
                optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
-               create_machine_metrics(values)
+               create_machine_metrics(values[selected_machine])
                if optimized_orders:
                     afficher_resultats(optimized_orders)
 
@@ -341,9 +339,6 @@ elif st.session_state.current_page == 'databases':
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
         st.success("Connexion à Supabase réussie.")
-    except KeyError:
-        st.error("Le fichier secrets.toml est manquant ou mal configuré. Vérifiez .streamlit/secrets.toml ou les secrets sur SCC.")
-        st.stop()
     except Exception as e:
         st.error(f"[ERROR] Erreur de connexion à Supabase : {e}")
         st.write(f"[DEBUG] Détails : {str(e)}")
