@@ -9,7 +9,7 @@ st.markdown(
     """
     <style>
     .stButton > button {
-        background-color: #f0e68c;
+        background-color: #617fe8;
         color: black;
         font-size: 24px;
         padding: 10px 30px;
@@ -21,7 +21,7 @@ st.markdown(
         text-align: center;
     }
     .stButton > button:hover {
-        background-color: #e6d85c;
+        background-color: #617fe8;
     }
     .css-1aumxhk {
         text-align: center;
@@ -42,7 +42,7 @@ st.markdown(
     """
     <style>
     [data-testid="stAppViewContainer"] {
-        background-image: url("https://www.chubb.com/content/dam/chubb-sites/chubb-com/fr-fr/entreprises/ressources/images/molecule_1440x692_2.jpg");
+        background-image: url("https://sothema.com/wp-content/uploads/2015/10/bgBiotechnologies.jpg?id=2937");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -69,14 +69,14 @@ st.markdown(
     """
     <h1 style='
         text-align: center; 
-        color: white; 
+        color: black; 
         font-size: 4rem; 
         text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
         margin-top: 17vh;
-        margin-bottom: 9rem;
+        margin-bottom: 8rem;
         font-weight: bold;
     '>
-    Bienvenu sur DIGISMED
+    Bienvenue sur DIGISMED
     </h1>
     """,
     unsafe_allow_html=True
@@ -90,6 +90,17 @@ if st.button("Démarrer"):
     st.session_state.show_login = True
 
 if st.session_state.get('show_login', False):
+    # Style pour les labels du formulaire en noir
+    st.markdown(
+        """
+        <style>
+        label, .stTextInput label {
+            color: black !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     with st.form("login_form", clear_on_submit=False):
         username = st.text_input("Nom d'utilisateur")
         password = st.text_input("Mot de passe", type="password")

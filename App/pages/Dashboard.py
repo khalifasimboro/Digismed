@@ -19,7 +19,7 @@ st.markdown("""
 <style>
     /* Sidebar styling - Fond bleu foncé brillant avec largeur augmentée */
     [data-testid="stSidebar"] {
-        background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%) !important;
+        background: linear-gradient(135deg, #1d3169 30%, #3B82F6 70%) !important;
         min-width: 300px !important; /* Ajuste cette valeur (ex. 250px, 300px, 350px) selon tes besoins */
     }
     /* Sidebar text color - Blanc pour contraste */
