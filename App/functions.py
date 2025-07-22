@@ -77,70 +77,26 @@ def optimiser_ordre_fabrication(df_result: pd.DataFrame) -> Dict[str, List[str]]
     return optimized_orders
 
 
-def upload_and_optimize() -> Optional[Dict[str, List[str]]]:
+def optimize(df_format,df_production):
     """
     Gère l'upload des fichiers et retourne les ordres optimisés
     
     Returns:
         Optional[Dict[str, List[str]]]: Ordres optimisés par machine (None si pas de fichiers ou erreur)
     """
-    
-    # Interface d'upload
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        uploaded_format = st.file_uploader(
-            "Charger le fichier Format",
-            type=["xlsx", "csv"],
-            key="format_upload"
-        )
-    
-    with col2:
-        uploaded_production = st.file_uploader(
-            "Charger le fichier Plan de production",
-            type=["xlsx", "csv"],
-            key="production_upload"
-        )
-    
-    # Initialisation des variables
-    df_format, df_production = None, None
-    
-    # Traitement du fichier Format
-    if uploaded_format is not None:
-        try:
-            if uploaded_format.name.endswith('.csv'):
-                df_format = pd.read_csv(uploaded_format)
-            else:
-                df_format = pd.read_excel(uploaded_format)
-            st.success("Fichier Format chargé avec succès.")
-        except Exception as e:
-            st.error(f"Erreur lors du chargement du fichier Format : {e}")
-            return None
-        
-        st.markdown("---")
-        st.write("Aperçu du fichier Format :")
-        st.dataframe(df_format.head())
-    
-    # Traitement du fichier Plan de production
-    if uploaded_production is not None:
-        try:
-            if uploaded_production.name.endswith('.csv'):
-                df_production = pd.read_csv(uploaded_production)
-            else:
-                df_production = pd.read_excel(uploaded_production)
-            st.success("Fichier Plan de production chargé avec succès.")
-        except Exception as e:
-            st.error(f"Erreur lors du chargement du fichier Plan de production : {e}")
-            return None
-        
-        st.markdown("---")
-        st.write("Aperçu du fichier Plan de production :")
-        st.dataframe(df_production.head())
-        st.markdown("---")
-    
+    resultats = {}
+    temps_standard = {
+        "MARCHESINI": 5.0,  # Temps standard pour Machine A
+        "NOACK": 3.0,  # Temps standard pour Machine B  
+        "HOONGA": 4.0,  # Temps standard pour Machine C
+        "ROMACO": 5.0   # Temps standard pour Machine C
+    }
+
     # Vérification des données chargées
     if df_format is not None and df_production is not None:
+
         try:
+            # Chemin de sortie pour le fichier Excel
             output_file_path = "/home/falleiz/Bureau/Digismed/Assets/donnees/test1.xlsx"
             # Fusionner les DataFrames sur la colonne commune "Designation"
             df_merged = pd.merge(df_production, df_format, on="Designation", how="left", suffixes=('_prod', '_format'))
@@ -160,12 +116,27 @@ def upload_and_optimize() -> Optional[Dict[str, List[str]]]:
             # Utilisation
             optimized_orders = optimiser_ordre_fabrication(df_result)
             
-            return optimized_orders
+
+            for machine, order in optimized_orders.items():
+                if not order:  # Si la liste est vide
+                    resultats[machine] = (0, 0.0)
+                    continue
+                
+                # Compter les changements de format
+                changements = 0
+                for i in range(1, len(order)):
+                    if order[i] != order[i-1]:  # Changement si produits différents
+                        changements += 1
+                
+                # Temps total (nombre de changements * temps standard de la machine)
+                temps_std = temps_standard.get(machine, 0.0)  # Utilise 0 si la machine n'est pas dans temps_standard
+                temps_total = changements * temps_std
+                
+                resultats[machine] = (changements, temps_total)
+    
+            return optimized_orders, resultats
             
             
         except Exception as e:
             st.error(f"Erreur lors du traitement des données : {e}")
             return None
-    
-    # Retour None si les fichiers ne sont pas encore chargés
-    #return None

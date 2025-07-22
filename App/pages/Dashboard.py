@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from typing import List, Dict
 from sqlalchemy import create_engine,text
-from functions import upload_and_optimize
+from functions import optimize
 import usersdb
 
 # Configuration de la page
@@ -104,12 +104,16 @@ with st.sidebar:
             type=["xlsx", "xls", "csv"],
             key="format_file"
         )
+        if format_file is not None:
+            st.session_state['format_data'] = pd.read_excel(format_file) if format_file.name.endswith(('xlsx', 'xls')) else pd.read_csv(format_file)
     with col2:
         cond_file = st.file_uploader(
             "Conditionnement",
             type=["xlsx", "xls", "csv"],
             key="cond_file"
         )
+        if cond_file is not None:
+            st.session_state['production_data'] = pd.read_excel(cond_file) if cond_file.name.endswith(('xlsx', 'xls')) else pd.read_csv(cond_file)
 
 # Gestion de l'état de la page
 if 'current_page' not in st.session_state:
@@ -201,35 +205,43 @@ if st.session_state.current_page == 'home':
             # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
             # Contenu spécifique à Marchesini
             if selected_machine == "MARCHESINI":
-                values = ["30", "2h 15m"]
+                optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
                 create_machine_metrics(values)
-                optimized_orders = upload_and_optimize()
+                
                 if optimized_orders:
                     afficher_resultats(optimized_orders)
 
             # Contenu spécifique à Noack
             elif selected_machine == "NOACK":
-               values = ["20", "3h 15m"]
+               optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
                create_machine_metrics(values)
-               optimized_orders = upload_and_optimize()
                if optimized_orders:
                     afficher_resultats(optimized_orders)
 
             # Contenu spécifique à Hoonga
             elif selected_machine == "HOONGA":
-                values = ["40", "5h 15m"]
+                optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
                 create_machine_metrics(values)
-                optimized_orders = upload_and_optimize()
                 if optimized_orders:
                     afficher_resultats(optimized_orders)
 
             # Contenu spécifique à Romaco
             elif selected_machine == "ROMACO":
-               values = ["10", "1h 15m"]
+               optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
                create_machine_metrics(values)
-               optimized_orders = upload_and_optimize()
                if optimized_orders:
                     afficher_resultats(optimized_orders)
+
+                    # Traitement du fichier Format
+            st.markdown("---")
+            st.write("Aperçu du fichier Format :")
+            st.dataframe(st.session_state['format_data'].head())
+
+             # Traitement du fichier Plan de production
+            st.markdown("---")
+            st.write("Aperçu du fichier Plan de production :")
+            st.dataframe(st.session_state['production_data'].head())
+            st.markdown("---")
 
         else:
              # Contenu centré
