@@ -201,9 +201,20 @@ def afficher_resultats(optimized_orders: Dict[str, List[str]]):
 if st.session_state.current_page == 'home':
         
         if selected_machine in ["MARCHESINI", "NOACK", "HOONGA", "ROMACO"]:
+            if 'format_data' not in st.session_state or 'production_data' not in st.session_state:
+                st.markdown(
+                    """
+                    <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
+                        <h3>📂 Importer les fichiers</h3>
+                        <p>Veuillez importer les fichiers de format et de conditionnement pour continuer.</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+                st.stop()
             # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
             # Contenu spécifique à Marchesini
-            if selected_machine == "MARCHESINI":
+            elif selected_machine == "MARCHESINI":
                 optimized_orders, values = optimize(st.session_state['format_data'], st.session_state['production_data'])
                 create_machine_metrics(values[selected_machine])
                 
