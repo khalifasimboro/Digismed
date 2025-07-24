@@ -3,15 +3,10 @@ import numpy as np
 import streamlit as st
 from typing import List, Dict,Optional
 
-
 # Colonnes de format à prendre en compte (toutes sauf "Couverture" et colonnes non numériques si présentes)
 format_columns = [
-    "Type Blister", "Dim blister", "Nbre d'unité / blstr", "Réf format",
-    "Réf formage", "Réf Souflage", "Réf Alimentation Auto", "Réf scellage Sup",
-    "Réf scellage inf", "Réf Refroidissement"
+    "Type Blister", "Dim blister"
 ]
-
-#Fonctions de calcul et d'optimisation 
 
 # Fonction pour parser et normaliser les valeurs (remplace "Non disponible" par 0)
 def normalize_value(value):
@@ -76,7 +71,6 @@ def optimiser_ordre_fabrication(df_result: pd.DataFrame) -> Dict[str, List[str]]
     
     return optimized_orders
 
-
 def optimize(df_format,df_production):
     """
     Gère l'upload des fichiers et retourne les ordres optimisés
@@ -86,8 +80,8 @@ def optimize(df_format,df_production):
     """
     resultats = {}
     temps_standard = {
-        "MARCHESINI": 5.0,  # Temps standard pour Machine A
-        "NOACK": 3.0,  # Temps standard pour Machine B  
+        "MARCHESINI": 15186,  # Temps standard pour Machine A
+        "NOACK": 16414,  # Temps standard pour Machine B  
         "HOONGA": 4.0,  # Temps standard pour Machine C
         "ROMACO": 5.0   # Temps standard pour Machine C
     }
@@ -107,9 +101,6 @@ def optimize(df_format,df_production):
 
             # Remplacer les valeurs NaN par une chaîne vide ou une valeur par défaut si nécessaire
             df_result = df_result.fillna("Non disponible")
-
-            # Ajouter une colonne "Couverture" avec des valeurs décimales aléatoires entre 0 et 10
-            df_result["Couverture"] = np.random.uniform(0, 10, size=len(df_result)).round(2)
 
             # Sauvegarder le résultat dans un nouveau fichier Excel
             df_result.to_excel(output_file_path, index=False)
@@ -131,8 +122,19 @@ def optimize(df_format,df_production):
                 # Temps total (nombre de changements * temps standard de la machine)
                 temps_std = temps_standard.get(machine, 0.0)  # Utilise 0 si la machine n'est pas dans temps_standard
                 temps_total = changements * temps_std
+
+                # Conversion en heures, minutes et secondes
+                secondes = int(temps_total % 60)
+                minutes = int((temps_total // 60) % 60)
+                heures = int(temps_total // 3600)
+                temps_total_str = ""
+                if heures > 0:
+                    temps_total_str += f"{heures} h "
+                if minutes > 0 or heures > 0:
+                    temps_total_str += f"{minutes} min "
+                temps_total_str += f"{secondes} s "
                 
-                resultats[machine] = (changements, temps_total)
+                resultats[machine] = (changements, temps_total_str)
     
             return optimized_orders, resultats
             

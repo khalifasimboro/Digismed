@@ -1,6 +1,7 @@
 import streamlit as st
 import usersdb
 
+
 # Configuration de la page
 st.set_page_config(page_title="DIGISMED", page_icon="🏠", layout="centered", initial_sidebar_state="collapsed")
 

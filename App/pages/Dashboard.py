@@ -405,7 +405,8 @@ elif st.session_state.current_page == 'databases':
                 with st.expander(f"{label} - Actions rapides", expanded=True):
                     col_v, col_i, col_e = st.columns([2, 1, 1])
                     with col_v:
-                        if st.button("👁️ Voir", key=f"voir_{key}"):
+                        if st.button("👁️ Voir", key=f"voir_{key}", type="secondary"):
+                            print("vuee")
                             st.write(f"[DEBUG] Bouton Voir cliqué pour {label}, clé : {key}")
                             table_name = table_mapping.get(key)
                             if table_name:
