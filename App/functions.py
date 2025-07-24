@@ -90,8 +90,7 @@ def optimize(df_format,df_production):
     if df_format is not None and df_production is not None:
 
         try:
-            # Chemin de sortie pour le fichier Excel
-            output_file_path = "/home/falleiz/Bureau/Digismed/Assets/donnees/test1.xlsx"
+
             # Fusionner les DataFrames sur la colonne commune "Designation"
             df_merged = pd.merge(df_production, df_format, on="Designation", how="left", suffixes=('_prod', '_format'))
 
@@ -102,8 +101,6 @@ def optimize(df_format,df_production):
             # Remplacer les valeurs NaN par une chaîne vide ou une valeur par défaut si nécessaire
             df_result = df_result.fillna("Non disponible")
 
-            # Sauvegarder le résultat dans un nouveau fichier Excel
-            df_result.to_excel(output_file_path, index=False)
             # Utilisation
             optimized_orders = optimiser_ordre_fabrication(df_result)
             
