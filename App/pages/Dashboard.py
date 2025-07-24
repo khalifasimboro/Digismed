@@ -228,7 +228,6 @@ if st.session_state.current_page == 'home':
                 <div class="centered-content">
                     <div class="content-card">
                         <h3>Importer les fichiers pour continuer.</h3>
-
                     </div>
                 </div>
                 """,
