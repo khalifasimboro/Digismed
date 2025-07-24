@@ -5,6 +5,7 @@ from typing import List, Dict
 from sqlalchemy import create_engine,text
 from functions import optimize
 import usersdb
+import openpyxl
 
 # Configuration de la page
 st.set_page_config(
@@ -105,7 +106,7 @@ with st.sidebar:
             key="format_file"
         )
         if format_file is not None:
-            st.session_state['format_data'] = pd.read_excel(format_file) if format_file.name.endswith(('xlsx', 'xls')) else pd.read_csv(format_file)
+            st.session_state['format_data'] = pd.read_excel(format_file, engine= 'openpyxl') if format_file.name.endswith(('xlsx', 'xls')) else pd.read_csv(format_file)
     with col2:
         cond_file = st.file_uploader(
             "Conditionnement",
@@ -113,7 +114,7 @@ with st.sidebar:
             key="cond_file"
         )
         if cond_file is not None:
-            st.session_state['production_data'] = pd.read_excel(cond_file) if cond_file.name.endswith(('xlsx', 'xls')) else pd.read_csv(cond_file)
+            st.session_state['production_data'] = pd.read_excel(cond_file, engine= 'openpyxl') if cond_file.name.endswith(('xlsx', 'xls')) else pd.read_csv(cond_file)
 
 # Gestion de l'état de la page
 if 'current_page' not in st.session_state:
