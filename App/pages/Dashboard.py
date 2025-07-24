@@ -204,12 +204,35 @@ if st.session_state.current_page == 'home':
             if 'format_data' not in st.session_state or 'production_data' not in st.session_state:
                 st.markdown(
                     """
-                    <div class="content-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white;">
-                        <h3>📂 Importer les fichiers</h3>
-                        <p>Veuillez importer les fichiers de format et de conditionnement pour continuer.</p>
+                    <style>
+                .centered-content {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 80vh; /* Réduit la hauteur minimale pour remonter */
+                    width: 100%;
+                    flex-direction: column;
+                    text-align: center;
+                    margin-top: -10vh; /* Ajuste cette valeur pour remonter davantage si besoin */
+                }
+                .content-card {
+                    background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+                    color: white;
+                    padding: 2rem;
+                    border-radius: 15px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    max-width: 80%;
+                    margin: 0 auto;
+                }
+                </style>
+                <div class="centered-content">
+                    <div class="content-card">
+                        <h3>Importer les fichiers pour continuer.</h3>
+
                     </div>
-                    """,
-                    unsafe_allow_html=True
+                </div>
+                """,
+                unsafe_allow_html=True
                 )
                 st.stop()
             # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
