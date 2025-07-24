@@ -82,8 +82,8 @@ def optimize(df_format,df_production):
     temps_standard = {
         "MARCHESINI": 15186,  # Temps standard pour Machine A
         "NOACK": 16414,  # Temps standard pour Machine B  
-        "HOONGA": 4.0,  # Temps standard pour Machine C
-        "ROMACO": 5.0   # Temps standard pour Machine C
+        "HOONGA": 11700,  # Temps standard pour Machine C
+        "ROMACO": 18000   # Temps standard pour Machine C
     }
 
     # Vérification des données chargées

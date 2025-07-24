@@ -204,7 +204,7 @@ if st.session_state.current_page == 'home':
             # Ajoutez ici des métriques ou du contenu spécifique à chaque machine si nécessaire
             # Contenu spécifique à Marchesini
             if selected_machine == "MARCHESINI":
-                optimized_orders,  values = optimize(st.session_state['format_data'], st.session_state['production_data'])
+                optimized_orders, values = optimize(st.session_state['format_data'], st.session_state['production_data'])
                 create_machine_metrics(values[selected_machine])
                 
                 if optimized_orders:
@@ -339,7 +339,6 @@ elif st.session_state.current_page == 'databases':
         engine = create_engine(SUPABASE_URL)
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
-        st.success("Connexion à Supabase réussie.")
     except Exception as e:
         st.error(f"[ERROR] Erreur de connexion à Supabase : {e}")
         st.write(f"[DEBUG] Détails : {str(e)}")
@@ -474,7 +473,7 @@ elif st.session_state.current_page == 'databases':
 
 elif st.session_state.current_page == 'help':
     # Chemin absolu du fichier d'aide
-    aide_path = "aide.txt"
+    aide_path = "App/aide.txt"
     try:
         with open(aide_path, "r", encoding="utf-8") as f:
             aide_content = f.read()
